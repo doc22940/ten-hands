@@ -25,9 +25,10 @@ class JobTerminal {
 
     private _container: HTMLDivElement = document.createElement("div");
 
-    constructor(_id: string) {
+    constructor(_id: string, xtermOptions?: ITerminalOptions) {
         this._id = _id;
-        this.terminal = new Terminal(this.options);
+        const newOptions = { ...this.options, ...xtermOptions };
+        this.terminal = new Terminal(newOptions);
     }
 
     public attachTo(container: HTMLDivElement) {

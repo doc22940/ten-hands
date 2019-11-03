@@ -1,3 +1,4 @@
+import { ITerminalOptions } from "xterm";
 import JobTerminal from "./JobTerminal";
 
 class JobTerminalManager {
@@ -11,10 +12,10 @@ class JobTerminalManager {
 
     private _terminals: { [key: string]: JobTerminal } = {};
 
-    public createJobTerminal(roomId: string): JobTerminal {
+    public createJobTerminal(roomId: string, xtermOptions?: ITerminalOptions): JobTerminal {
         let terminal = this.getTerminalForRoom(roomId);
         if (!terminal) {
-            terminal = new JobTerminal(roomId);
+            terminal = new JobTerminal(roomId, xtermOptions);
             this._terminals[roomId] = terminal;
         }
         return terminal;

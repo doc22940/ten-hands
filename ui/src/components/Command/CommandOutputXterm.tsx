@@ -19,13 +19,23 @@ const TerminalContainer = styled.div`
     white-space: pre-wrap;
 `;
 
+const getSanitizedTerminalOptions = (options: object) => {
+    const allowedOptions = ["fontFamily"];
+    const sanitizedOptions = {};
+    Object.entries(options).map(([key, value]) => {
+        if (allowedOptions.indexOf(key) > -1) {
+            sanitizedOptions[key] = value;
+        }
+    });
+    return sanitizedOptions;
+};
+
 const CommandOutputXterm: React.FC<ICommandProps> = React.memo(({ room, index }) => {
     const elRef = React.useRef<HTMLDivElement>(null);
     const terminal = React.useRef<JobTerminal | null>(null);
     const { theme } = useTheme();
     const currentTheme = React.useRef<any>(null);
     const themeTimeout = React.useRef<any>(null);
-    // const terminalAttached = React.useRef<boolean>(false);
     const { config } = useConfig();
 
     const setTheme = () => {
@@ -47,7 +57,16 @@ const CommandOutputXterm: React.FC<ICommandProps> = React.memo(({ room, index })
     useEffect(() => {
         if (elRef && elRef.current) {
             if (terminal.current === null) {
-                terminal.current = JobTerminalManager.getInstance().createJobTerminal(room);
+                if (config.terminalOptions) {
+                    const sanitizedTerminalOptions = getSanitizedTerminalOptions(config.terminalOptions);
+                    console.log("sanitizedTerminalOptions:", sanitizedTerminalOptions);
+                    terminal.current = JobTerminalManager.getInstance().createJobTerminal(
+                        room,
+                        sanitizedTerminalOptions,
+                    );
+                } else {
+                    terminal.current = JobTerminalManager.getInstance().createJobTerminal(room);
+                }
                 terminal.current.attachTo(elRef.current);
             }
         }
