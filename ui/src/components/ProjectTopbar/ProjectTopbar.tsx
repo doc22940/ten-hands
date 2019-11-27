@@ -11,7 +11,8 @@ import {
   MenuItem,
   Navbar,
   Popover,
-  Tooltip
+  Tooltip,
+  HTMLSelect
 } from "@blueprintjs/core";
 import React, { useEffect } from "react";
 import styled from "styled-components";
@@ -38,6 +39,8 @@ const GitBranchContainer = styled.div`
   }
 `;
 
+type TASKS_SORT_ORDER = "name" | "last-executed";
+
 const ProjectTopbar: React.FC<IProjectTopbarProps> = React.memo(
   ({ activeProject }) => {
     const [isDeleteAlertOpen, setDeleteAlertOpen] = React.useState<boolean>(
@@ -60,8 +63,27 @@ const ProjectTopbar: React.FC<IProjectTopbarProps> = React.memo(
     const [gitBranch, setGitBranch] = React.useState<string>("");
     const { config } = useConfig();
     let checkBranchTimerRef = React.useRef<number>();
+    const {
+      deleteProject,
+      projects,
+      renameProject,
+      reorderTasks
+    } = useProjects();
 
-    const { deleteProject, projects, renameProject } = useProjects();
+    const [tasksOrder, setTasksOrder] = React.useState<TASKS_SORT_ORDER>(
+      "name"
+    );
+
+    const sortTasksBy = (order: TASKS_SORT_ORDER = "name") => {
+      let tasksToSort: IProjectCommand[] = [...activeProject.commands];
+      if (order === "name") {
+        tasksToSort.sort((a, b) => (a.name < b.name ? -1 : 1));
+      } else if (order === "last-executed") {
+        tasksToSort.sort((a, b) => (a.name < b.name ? -1 : 1));
+      }
+      setTasksOrder(order);
+      reorderTasks(activeProject._id!, tasksToSort);
+    };
 
     const shouldDeleteProject = async shouldDelete => {
       try {
@@ -179,6 +201,20 @@ const ProjectTopbar: React.FC<IProjectTopbarProps> = React.memo(
             </Navbar.Heading>
           </Navbar.Group>
           <Navbar.Group align={Alignment.RIGHT}>
+            Sort tasks by: <span style={{ paddingRight: 10 }}></span>
+            <HTMLSelect
+              value={tasksOrder}
+              defaultValue={"name"}
+              onChange={e => {
+                console.log(e.target.value);
+                sortTasksBy(e.target.value as TASKS_SORT_ORDER);
+              }}
+              options={[
+                { label: "Name", value: "name" },
+                { label: "Last Executed", value: "last-executed" }
+              ]}
+            />
+            <Navbar.Divider />
             <Button
               onClick={() => setDrawerOpen(true)}
               icon="add"
