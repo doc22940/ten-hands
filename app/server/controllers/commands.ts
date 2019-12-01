@@ -59,11 +59,41 @@ export function removeCommand(req: Request, res: Response) {
 export function reorderCommands(req: Request, res: Response) {
   try {
     const { projectId } = req.params;
+    const { taskOrder } = req.query;
     const { commands } = req.body;
     if (!commands) {
       throw new Error("No commands sent");
     }
-    const project = db.reorderProjectCommands(projectId, commands);
+    const project = db.reorderProjectCommands(projectId, commands, taskOrder);
+    return res.status(200).send(project);
+  } catch (error) {
+    console.log("error:", error);
+    return res.status(400).send({ error: error.message });
+  }
+}
+
+/**
+ * Controller to update task
+ *
+ * @export
+ * @param {Request} req
+ * @param {Response} res
+ * @returns
+ */
+export function updateCommand(req: Request, res: Response) {
+  try {
+    const { projectId, commandId } = req.params;
+    const commandUpdates = req.body;
+
+    if (!commandUpdates) {
+      throw new Error("No task updates sent.");
+    }
+
+    const project = db.updateProjectCommand(
+      projectId,
+      commandId,
+      commandUpdates
+    );
     return res.status(200).send(project);
   } catch (error) {
     console.log("error:", error);

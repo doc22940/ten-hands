@@ -1,8 +1,12 @@
 interface IProjectCommand {
   _id?: string;
   execDir?: string;
-  [name: string]: string;
+  name: string;
+  cmd: string;
+  lastExecutedAt?: number;
 }
+
+type TASKS_SORT_ORDER = "name-asc" | "name-desc" | "last-executed" | "default"; // default is the order stored in database.
 
 interface IProject {
   _id?: string;
@@ -10,6 +14,7 @@ interface IProject {
   type: string;
   path: string;
   commands: IProjectCommand[];
+  taskOrder: TASKS_SORT_ORDER;
 }
 
 declare enum JobStatus {

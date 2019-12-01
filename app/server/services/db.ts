@@ -123,7 +123,8 @@ class Database {
     const commands = project.commands.map(command => {
       return {
         _id: uuidv4(),
-        ...command
+        ...command,
+        lastExecutedAt: Date.now()
       };
     });
 
@@ -289,13 +290,36 @@ class Database {
    */
   public reorderProjectCommands(
     projectId: string,
-    commands: IProjectCommand[]
+    commands: IProjectCommand[],
+    taskOrder: string = "default"
   ): IProject {
     this.db
       .get("projects")
       .find({ _id: projectId })
       .set("commands", commands)
+      .set("taskOrder", taskOrder)
       .write();
+    const project = this.getProject(projectId);
+    return project;
+  }
+
+  public updateProjectCommand(
+    projectId: string,
+    commandId: string,
+    commandUpdates: Partial<IProjectCommand>
+  ) {
+    const command = this.db
+      .get("projects")
+      .find({ _id: projectId })
+      .get("commands")
+      .find({ _id: commandId });
+    const updatedCommand = {
+      ...command.value(),
+      ...commandUpdates
+    };
+
+    command.assign(updatedCommand).write();
+
     const project = this.getProject(projectId);
     return project;
   }

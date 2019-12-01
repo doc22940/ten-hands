@@ -70,8 +70,8 @@
     "jest-dom": "^3.2.2",
     "test-data-bot": "^0.8.0",
     "ts-jest": "^24.0.2",
-    "tslint": "^5.16.0",
-    "tslint-react-hooks": "^2.1.0",
-    "typescript": "^3.4.5"
+    "tslint": "^5.20.1",
+    "tslint-react-hooks": "^2.2.1",
+    "typescript": "^3.7.2"
   }
 }

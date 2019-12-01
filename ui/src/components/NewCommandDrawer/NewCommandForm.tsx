@@ -8,10 +8,11 @@ import { useConfig } from "../shared/Config";
 import { useProjects } from "../shared/Projects";
 
 const initialCommand: IProjectCommand = {
-  _id: "",
+  _id: uuidv4(),
   name: "",
   execDir: "",
-  cmd: ""
+  cmd: "",
+  lastExecutedAt: 0
 };
 
 const Container = styled.div`
@@ -137,7 +138,7 @@ const NewProjectForm: React.FC<INewProjectFormProps> = React.memo(
                   id="execDir"
                   type="text"
                   onChange={props.handleChange}
-                  value={props.values.path}
+                  value={props.values.execDir}
                 />
               </FormGroup>
 

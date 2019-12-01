@@ -25,6 +25,7 @@ import { useProjects } from "../shared/Projects";
 import { useTheme } from "../shared/Themes";
 import CommandOrderListContainer from "./CommandOrderListContainer";
 import { useMountedState } from "../shared/hooks";
+import TaskSorter from "./TaskSorter";
 
 interface IProjectTopbarProps {
   activeProject: IProject;
@@ -38,8 +39,6 @@ const GitBranchContainer = styled.div`
     padding-right: 5px;
   }
 `;
-
-type TASKS_SORT_ORDER = "name" | "last-executed";
 
 const ProjectTopbar: React.FC<IProjectTopbarProps> = React.memo(
   ({ activeProject }) => {
@@ -69,21 +68,6 @@ const ProjectTopbar: React.FC<IProjectTopbarProps> = React.memo(
       renameProject,
       reorderTasks
     } = useProjects();
-
-    const [tasksOrder, setTasksOrder] = React.useState<TASKS_SORT_ORDER>(
-      "name"
-    );
-
-    const sortTasksBy = (order: TASKS_SORT_ORDER = "name") => {
-      let tasksToSort: IProjectCommand[] = [...activeProject.commands];
-      if (order === "name") {
-        tasksToSort.sort((a, b) => (a.name < b.name ? -1 : 1));
-      } else if (order === "last-executed") {
-        tasksToSort.sort((a, b) => (a.name < b.name ? -1 : 1));
-      }
-      setTasksOrder(order);
-      reorderTasks(activeProject._id!, tasksToSort);
-    };
 
     const shouldDeleteProject = async shouldDelete => {
       try {
@@ -201,19 +185,8 @@ const ProjectTopbar: React.FC<IProjectTopbarProps> = React.memo(
             </Navbar.Heading>
           </Navbar.Group>
           <Navbar.Group align={Alignment.RIGHT}>
-            Sort tasks by: <span style={{ paddingRight: 10 }}></span>
-            <HTMLSelect
-              value={tasksOrder}
-              defaultValue={"name"}
-              onChange={e => {
-                console.log(e.target.value);
-                sortTasksBy(e.target.value as TASKS_SORT_ORDER);
-              }}
-              options={[
-                { label: "Name", value: "name" },
-                { label: "Last Executed", value: "last-executed" }
-              ]}
-            />
+            <TaskSorter activeProject={activeProject} />
+
             <Navbar.Divider />
             <Button
               onClick={() => setDrawerOpen(true)}
