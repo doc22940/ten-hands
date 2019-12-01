@@ -62,12 +62,7 @@ const ProjectTopbar: React.FC<IProjectTopbarProps> = React.memo(
     const [gitBranch, setGitBranch] = React.useState<string>("");
     const { config } = useConfig();
     let checkBranchTimerRef = React.useRef<number>();
-    const {
-      deleteProject,
-      projects,
-      renameProject,
-      reorderTasks
-    } = useProjects();
+    const { deleteProject, projects, renameProject } = useProjects();
 
     const shouldDeleteProject = async shouldDelete => {
       try {
