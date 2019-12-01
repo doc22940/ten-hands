@@ -30,7 +30,12 @@ const TaskSorter: React.FC<ITaskSorterProps> = React.memo(
     useEffect(() => {
       console.log("Initial: ", tasksOrder);
       if (activeProject.taskOrder !== tasksOrder) {
-        setTasksOrder(activeProject.taskOrder);
+        if (!activeProject.taskOrder) {
+          // If there is no taskOrder currently, change it to "default"
+          setTasksOrder(tasksOrder);
+        } else {
+          setTasksOrder(activeProject.taskOrder);
+        }
       }
     }, [activeProject]);
 
